@@ -4,7 +4,7 @@ import Feed from './components/Feed';
 import Map from './components/Map';
 import Footer from './components/Footer'
 import axios from 'axios'
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {Routes, Route} from 'react-router-dom'
 
 function App() {
@@ -13,6 +13,16 @@ function App() {
   const [currSearch, setCurrentSearch] = useState('')
   const [error, setError] = useState('')
   const [open, setOpen] = useState(false)
+
+  useEffect(() => {
+    const check = localStorage.getItem('weatherSearch')
+    if (check) {
+      const search = JSON.parse(localStorage.getItem('search'))
+
+      setData(JSON.parse(check))
+      setCurrentSearch(search)
+    }
+  }, [])
 
   const handleSearchSubmit = (e) => {
     e.preventDefault()
@@ -23,6 +33,7 @@ function App() {
       setData(response.data)
       setError('')
       localStorage.setItem('weatherSearch', JSON.stringify(response.data))
+      localStorage.setItem('search', JSON.stringify(response.data.city.name))
     })
     .catch((error) => {
       setError(error)
